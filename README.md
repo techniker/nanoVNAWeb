@@ -158,7 +158,7 @@ single **Pull and redeploy** click in the same Stacks UI.
 > access put the container behind a TLS-terminating reverse proxy
 > (Traefik, Caddy, nginx-proxy, …).
 
-### 2. Run via Docker Compose from source (production-style)
+### 2. Run via Docker Compose from source (production)
 
 ```bash
 git clone https://github.com/techniker/nanoVNAWeb.git nanovnaweb && cd nanovnaweb
