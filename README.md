@@ -95,17 +95,19 @@ on every push to `main` and every `v*` tag:
 ghcr.io/techniker/nanovnaweb:latest
 ```
 
-For a one-shot host:
+#### Plain `docker run`
 
 ```bash
 docker run -d --name nanovnaweb -p 8080:80 ghcr.io/techniker/nanovnaweb:latest
 # open http://localhost:8080
 ```
 
-For **Portainer**: *Stacks → Add stack → Web editor*, then paste
-[`docker/portainer-stack.yml`](docker/portainer-stack.yml) (or the
-inline equivalent below) and click *Deploy the stack*. No source
-checkout required on the host.
+#### Plain `docker compose` (no source checkout needed)
+
+Drop the snippet below into a `docker-compose.yml` on your host and run
+`docker compose up -d`. It is the same content as
+[`docker/portainer-stack.yml`](docker/portainer-stack.yml) in this
+repository.
 
 ```yaml
 services:
@@ -115,16 +117,46 @@ services:
     restart: unless-stopped
     ports:
       - "${NVW_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
     read_only: true
-    tmpfs: ["/var/cache/nginx", "/var/run"]
-    cap_drop: ["ALL"]
-    cap_add: ["CHOWN", "SETGID", "SETUID", "NET_BIND_SERVICE"]
-    security_opt: ["no-new-privileges:true"]
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
 ```
 
-> Web Serial requires a secure context — `http://localhost` works,
-> `http://192.168.x.y` does **not**. For LAN / remote access put this
-> behind a TLS-terminating reverse proxy.
+#### Portainer (Web editor)
+
+1. **Stacks** → **Add stack**.
+2. Give it a name (e.g. `nanovnaweb`) and pick **Web editor**.
+3. Paste the YAML above (or the contents of
+   [`docker/portainer-stack.yml`](docker/portainer-stack.yml)).
+4. *Optional:* under **Environment variables**, add `NVW_PORT` to
+   override the host port (default `8080`).
+5. Click **Deploy the stack** and open `http://<host>:8080/`.
+
+No source checkout, no build step on the host — Portainer pulls the
+image straight from GHCR and starts the container. Updates are a
+single **Pull and redeploy** click in the same Stacks UI.
+
+> **Secure context required.** Web Serial only works on
+> `http://localhost` or `https://your.host`. On a LAN IP
+> (`http://192.168.x.y`) the *Connect* button is inert. For remote
+> access put the container behind a TLS-terminating reverse proxy
+> (Traefik, Caddy, nginx-proxy, …).
 
 ### 2. Run via Docker Compose from source (production-style)
 

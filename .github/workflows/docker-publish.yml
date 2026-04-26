@@ -26,6 +26,12 @@ on:
   push:
     branches: [main]
     tags: ['v*']
+    # Doc-only edits don't change the image — skip the ~1 min multi-arch
+    # rebuild. Tag pushes ignore paths-ignore, so releases still publish.
+    paths-ignore:
+      - 'README.md'
+      - 'docs/**'
+      - '**/*.md'
   workflow_dispatch:
 
 env:
