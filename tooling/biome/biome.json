@@ -1,0 +1,69 @@
+{
+  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "organizeImports": { "enabled": true },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "trailingCommas": "all",
+      "semicolons": "always",
+      "arrowParentheses": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "suspicious": {
+        "noExplicitAny": "error"
+      },
+      "style": {
+        "noNonNullAssertion": "error",
+        "useConst": "error"
+      },
+      "correctness": {
+        "noUnusedImports": "error",
+        "noUnusedVariables": "error"
+      },
+      "nursery": {
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@nanovnaweb/device": "Do not import @nanovnaweb/device directly from UI/state packages; go through @nanovnaweb/workers.",
+              "@nanovnaweb/protocol": "Do not import @nanovnaweb/protocol directly from UI/state packages; go through @nanovnaweb/workers."
+            }
+          }
+        }
+      }
+    }
+  },
+  "overrides": [
+    {
+      "include": ["packages/device/**", "packages/protocol/**", "packages/workers/**"],
+      "linter": {
+        "rules": {
+          "nursery": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    }
+  ],
+  "files": {
+    "ignore": [
+      "**/dist/**",
+      "**/node_modules/**",
+      "**/*.tsbuildinfo",
+      "**/coverage/**",
+      "**/.vite/**"
+    ]
+  }
+}

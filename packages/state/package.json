@@ -1,0 +1,45 @@
+{
+  "name": "@nanovnaweb/state",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --build --pretty",
+    "clean": "rm -rf dist .tsbuildinfo"
+  },
+  "dependencies": {
+    "@nanovnaweb/formats": "workspace:*",
+    "@nanovnaweb/persistence": "workspace:*",
+    "@nanovnaweb/render": "workspace:*",
+    "@nanovnaweb/shared": "workspace:*",
+    "@nanovnaweb/workers": "workspace:*",
+    "zustand": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": { "optional": true },
+    "react-dom": { "optional": true }
+  },
+  "devDependencies": {
+    "@nanovnaweb/tsconfig": "workspace:*",
+    "@nanovnaweb/vitest-config": "workspace:*",
+    "@testing-library/react": "^16.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "jsdom": "^25.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

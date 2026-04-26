@@ -1,0 +1,33 @@
+{
+  "name": "@nanovnaweb/workers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./io-api": {
+      "types": "./dist/io-api.d.ts",
+      "default": "./dist/io-api.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "typecheck": "tsc --build --pretty",
+    "clean": "rm -rf dist .tsbuildinfo"
+  },
+  "dependencies": {
+    "@nanovnaweb/device": "workspace:*",
+    "@nanovnaweb/protocol": "workspace:*",
+    "@nanovnaweb/shared": "workspace:*",
+    "comlink": "^4.4.1"
+  },
+  "devDependencies": {
+    "@nanovnaweb/tsconfig": "workspace:*",
+    "@nanovnaweb/vitest-config": "workspace:*"
+  }
+}

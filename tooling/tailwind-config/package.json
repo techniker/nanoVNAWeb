@@ -1,0 +1,8 @@
+{
+  "name": "@nanovnaweb/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "files": ["index.ts", "tokens.css"]
+}

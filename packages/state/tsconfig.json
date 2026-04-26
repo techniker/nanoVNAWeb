@@ -1,0 +1,17 @@
+{
+  "extends": "@nanovnaweb/tsconfig/tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "lib": ["ES2022", "DOM"]
+  },
+  "references": [
+    { "path": "../shared" },
+    { "path": "../formats" },
+    { "path": "../workers" },
+    { "path": "../persistence" },
+    { "path": "../render" }
+  ],
+  "include": ["src/**/*"],
+  "exclude": ["test/**/*", "dist/**/*"]
+}

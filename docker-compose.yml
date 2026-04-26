@@ -1,0 +1,46 @@
+# NanoVNAWeb — Docker Compose deployment.
+#
+# Runs a single nginx container serving the built SPA on port 8080 by
+# default. The app talks to the NanoVNA directly from the browser over
+# Web Serial, so there is no backend service — one container is enough.
+#
+# ⚠  Web Serial requires a *secure context*. That means either:
+#     - http://localhost   (browser-treated as secure)
+#     - https://your.host  (real TLS certificate)
+#   Over plain HTTP on any non-localhost address the USB connect button
+#   will be inert. For remote access put this service behind a reverse
+#   proxy that terminates TLS (Traefik, Caddy, nginx-proxy, etc.).
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: nanovnaweb:local
+    container_name: nanovnaweb
+    restart: unless-stopped
+    # Host port is configurable via NVW_PORT; default 8080 avoids
+    # clashing with whatever might be on 80/443 already.
+    ports:
+      - "${NVW_PORT:-8080}:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    # Least-privilege hardening — the runtime is a pure static server,
+    # so it needs neither writable layers nor elevated capabilities.
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true

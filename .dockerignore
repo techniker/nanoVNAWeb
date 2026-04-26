@@ -1,0 +1,52 @@
+# Node / pnpm
+node_modules
+**/node_modules
+.pnpm-store
+**/.pnpm-store
+
+# Build output — rebuilt inside the container
+dist
+**/dist
+build
+**/build
+out
+**/out
+.tsbuildinfo
+**/*.tsbuildinfo
+.vite
+**/.vite
+
+# VCS + editor metadata
+.git
+.gitignore
+.gitattributes
+.github
+.vscode
+.idea
+.DS_Store
+
+# Local env / logs / coverage
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+coverage
+**/coverage
+.claude
+.superdesign
+
+# Docker artifacts themselves — no need to re-include the compose stack
+Dockerfile
+docker-compose.yml
+.dockerignore
+docker
+
+# Tauri (desktop shell) — not part of the web build
+src-tauri
+apps/*/src-tauri
+
+# Misc large / irrelevant dirs
+tmp

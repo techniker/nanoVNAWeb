@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    biome:
+      glob: '*.{ts,tsx,js,jsx,json,css}'
+      run: pnpm biome check --write {staged_files} --no-errors-on-unmatched
+      stage_fixed: true
+    typecheck:
+      run: pnpm typecheck
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}

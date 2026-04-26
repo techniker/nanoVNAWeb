@@ -1,0 +1,25 @@
+{
+  "extends": "@nanovnaweb/tsconfig/tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": true,
+    "allowImportingTsExtensions": false,
+    "types": ["vite/client", "vite-plugin-pwa/client"]
+  },
+  "include": ["src/**/*", "test/**/*"],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/formats" },
+    { "path": "../../packages/persistence" },
+    { "path": "../../packages/render" },
+    { "path": "../../packages/state" },
+    { "path": "../../packages/workers" }
+  ]
+}
