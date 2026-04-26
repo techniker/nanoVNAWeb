@@ -8,7 +8,12 @@
 # packages and tooling are built first (the root `build` script handles
 # that), then the Vite-based web app is built against those fresh dists.
 # --------------------------------------------------------------------------
-FROM node:20.11-alpine AS builder
+# `--platform=$BUILDPLATFORM` pins the heavy Node build stage to the
+# native architecture of the build host (the GitHub runner is amd64).
+# The downstream nginx stage is the only one that respects the target
+# platform, so cross-arch builds (e.g. linux/arm64 for Raspberry Pi)
+# stay fast — we never run pnpm + tsc + Vite under QEMU emulation.
+FROM --platform=$BUILDPLATFORM node:20.11-alpine AS builder
 
 # Corepack ships with Node 20 and can activate the project's pnpm version
 # without a global install. Pin the version explicitly so the build is

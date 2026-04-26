@@ -86,7 +86,47 @@ matrix lives in [`docs/v2-hardware-validation.md`](docs/v2-hardware-validation.m
 
 ## Quick start
 
-### 1. Run via Docker Compose (production-style)
+### 1. Run from the published image (Portainer / one-host)
+
+A multi-arch image (`linux/amd64` + `linux/arm64`) is published to GHCR
+on every push to `main` and every `v*` tag:
+
+```
+ghcr.io/techniker/nanovnaweb:latest
+```
+
+For a one-shot host:
+
+```bash
+docker run -d --name nanovnaweb -p 8080:80 ghcr.io/techniker/nanovnaweb:latest
+# open http://localhost:8080
+```
+
+For **Portainer**: *Stacks → Add stack → Web editor*, then paste
+[`docker/portainer-stack.yml`](docker/portainer-stack.yml) (or the
+inline equivalent below) and click *Deploy the stack*. No source
+checkout required on the host.
+
+```yaml
+services:
+  web:
+    image: ghcr.io/techniker/nanovnaweb:latest
+    container_name: nanovnaweb
+    restart: unless-stopped
+    ports:
+      - "${NVW_PORT:-8080}:80"
+    read_only: true
+    tmpfs: ["/var/cache/nginx", "/var/run"]
+    cap_drop: ["ALL"]
+    cap_add: ["CHOWN", "SETGID", "SETUID", "NET_BIND_SERVICE"]
+    security_opt: ["no-new-privileges:true"]
+```
+
+> Web Serial requires a secure context — `http://localhost` works,
+> `http://192.168.x.y` does **not**. For LAN / remote access put this
+> behind a TLS-terminating reverse proxy.
+
+### 2. Run via Docker Compose from source (production-style)
 
 ```bash
 git clone https://github.com/techniker/nanoVNAWeb.git nanovnaweb && cd nanovnaweb
@@ -101,7 +141,7 @@ prebuilt SPA. Override the host port with `NVW_PORT=…`:
 NVW_PORT=3000 docker compose up -d --build
 ```
 
-### 2. Run the dev server
+### 3. Run the dev server
 
 ```bash
 pnpm install
@@ -111,7 +151,7 @@ pnpm --filter @nanovnaweb/web dev
 
 Hot-module reload, source maps, full DevTools.
 
-### 3. Build a static bundle
+### 4. Build a static bundle
 
 ```bash
 pnpm install
@@ -135,8 +175,11 @@ static host (S3 + CloudFront, Caddy, GitHub Pages with HTTPS, …).
 
 ## Deployment
 
-The repo ships a multi-stage [Dockerfile](Dockerfile) and a hardened
-[`docker-compose.yml`](docker-compose.yml) targeted at self-hosting:
+For most self-hosters the easiest path is the **published GHCR image**
+(see [Quick start §1](#1-run-from-the-published-image-portainer--one-host)).
+The repo also ships a multi-stage [Dockerfile](Dockerfile) and a
+hardened [`docker-compose.yml`](docker-compose.yml) for building from
+source:
 
 - **Build stage** — `node:20.11-alpine` + corepack-pinned pnpm 9.12;
   builds workspace packages and the Vite bundle with a BuildKit cache
@@ -149,6 +192,9 @@ The repo ships a multi-stage [Dockerfile](Dockerfile) and a hardened
 - **Hardening** — `read_only: true`, `cap_drop: ALL` plus only the caps
   nginx needs to bind :80 and drop privileges, `no-new-privileges`, and
   `tmpfs` for the few writable paths nginx needs at runtime.
+- **Multi-arch publish** — [`.github/workflows/docker-publish.yml`](.github/workflows/docker-publish.yml)
+  builds `linux/amd64` + `linux/arm64` on every push to `main` and
+  every `v*` tag, pushing to `ghcr.io/techniker/nanovnaweb`.
 
 For HTTPS, sit the container behind a reverse proxy (Traefik, Caddy,
 nginx-proxy, …) — Web Serial requires it for any non-localhost host.
