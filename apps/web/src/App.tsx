@@ -1,5 +1,4 @@
 import { AppStateProvider } from '@nanovnaweb/state';
-import { Sliders } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { RightConfigPanel } from './config/RightConfigPanel.js';
@@ -11,14 +10,13 @@ import { ChartGrid } from './layout/ChartGrid.js';
 import { PwaUpdatePrompt } from './pwa/PwaUpdatePrompt.js';
 import { RecordingsPanel } from './recordings/RecordingsPanel.js';
 import { type AppServices, createAppServices } from './services.js';
-import { SettingsDialog } from './settings/SettingsDialog.js';
+import { AboutDialog } from './shell/AboutDialog.js';
+import { InfoButton } from './shell/InfoButton.js';
 import { LayoutSwitcher } from './shell/LayoutSwitcher.js';
-import { MenuDropdown } from './shell/MenuDropdown.js';
 import { StatusStrip } from './shell/StatusStrip.js';
 import { ThemeToggle } from './shell/ThemeToggle.js';
 import { TopBar } from './shell/TopBar.js';
 import { useShortcuts } from './shortcuts/useShortcuts.js';
-import { SweepDialog } from './sweep/SweepDialog.js';
 import { useTheme } from './theme/useTheme.js';
 import { ToastRoot } from './toasts/ToastRoot.js';
 
@@ -52,9 +50,7 @@ interface AppBodyProps {
 }
 
 function AppBody({ services }: AppBodyProps): React.ReactElement {
-  const [sweepOpen, setSweepOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [settingsTab, setSettingsTab] = useState<'general' | 'device' | 'logs'>('general');
+  const [aboutOpen, setAboutOpen] = useState(false);
 
   useAutoSweep(services.state, (msg) => console.error('[auto-sweep]', msg));
 
@@ -76,8 +72,7 @@ function AppBody({ services }: AppBodyProps): React.ReactElement {
       }
     },
     onEscape: () => {
-      setSweepOpen(false);
-      setSettingsOpen(false);
+      setAboutOpen(false);
     },
     onLayout: (p) => services.state.stores.chart.actions.setPreset(p),
   });
@@ -91,34 +86,13 @@ function AppBody({ services }: AppBodyProps): React.ReactElement {
           <ConnectButton onError={(msg) => console.error(msg)} />
           <StreamButton onError={(msg) => console.error(msg)} />
           <StatusBadge />
-          <button
-            type="button"
-            aria-label="Sweep parameters"
-            onClick={() => setSweepOpen(true)}
-            className="flex h-8 w-8 items-center justify-center rounded hover:bg-[var(--color-panel-2)]"
-          >
-            <Sliders className="h-4 w-4" aria-hidden="true" />
-          </button>
           <div className="flex-1" />
           <LayoutSwitcher
             preset={services.state.stores.chart.store.getState().preset}
             onChange={services.state.stores.chart.actions.setPreset}
           />
           <ThemeToggle />
-          <MenuDropdown
-            onOpenSettings={() => {
-              setSettingsTab('general');
-              setSettingsOpen(true);
-            }}
-            onOpenDevice={() => {
-              setSettingsTab('device');
-              setSettingsOpen(true);
-            }}
-            onOpenLogs={() => {
-              setSettingsTab('logs');
-              setSettingsOpen(true);
-            }}
-          />
+          <InfoButton onClick={() => setAboutOpen(true)} />
         </TopBar>
         <div className="flex flex-1 overflow-hidden">
           <RecordingsPanel />
@@ -128,12 +102,7 @@ function AppBody({ services }: AppBodyProps): React.ReactElement {
           <RightConfigPanel />
         </div>
         <StatusStrip />
-        <SweepDialog open={sweepOpen} onOpenChange={setSweepOpen} />
-        <SettingsDialog
-          open={settingsOpen}
-          initialTab={settingsTab}
-          onOpenChange={setSettingsOpen}
-        />
+        <AboutDialog open={aboutOpen} onOpenChange={setAboutOpen} />
       </div>
     </AppStateProvider>
   );

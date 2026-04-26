@@ -79,10 +79,9 @@ of the container.
 | NanoVNA F V2 / F V3   | V2 driver + cap override                                                 |
 
 Detected capabilities (frequency range, max points) flow from the device
-into the Stimulus form via the connection store. If the auto-detected
-profile is wrong for your board, the **Device Capability Override** in
-the Connect panel lets you adjust it manually. The current V2 hardware
-matrix lives in [`docs/v2-hardware-validation.md`](docs/v2-hardware-validation.md).
+into the Stimulus form via the connection store. The current V2
+hardware matrix lives in
+[`docs/v2-hardware-validation.md`](docs/v2-hardware-validation.md).
 
 ## Quick start
 
